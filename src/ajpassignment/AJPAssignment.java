@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package ajpassignment;
-import java.io.IOException;
 import ui.*;
 
 /**
@@ -13,18 +12,17 @@ import ui.*;
  */
 public class AJPAssignment {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws Exception {
-        // TODO code application logic here
-        
-        SplashScreen splash = new SplashScreen("ajpassignment\\BusIcon.png");
-        splash.setVisible(true);
+    public static void LaunchSplash() throws InterruptedException{
+        SplashScreen Splash = new SplashScreen();
+        Splash.setVisible(true);
         Thread.sleep(2000);
-        splash.dispose();
-        MainForm MainUI = new MainForm();
-        MainUI.setVisible(true);
+        Splash.dispose();
+    }
+    
+    public static void main(String[] args) throws InterruptedException{
+        // TODO code application logic here
+        LaunchSplash();
+        UIManager.GetMainUI().setVisible(true);
     }
     
 }
