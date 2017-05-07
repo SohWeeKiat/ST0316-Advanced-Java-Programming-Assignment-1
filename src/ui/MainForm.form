@@ -50,7 +50,7 @@
                       <Component id="btnBusStops" alignment="3" min="-2" pref="130" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="26" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

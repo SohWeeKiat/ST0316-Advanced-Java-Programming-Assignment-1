@@ -5,9 +5,16 @@
  */
 package ui;
 
+import ajpassignment.*;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -15,6 +22,7 @@ import javax.swing.event.DocumentListener;
  */
 public class SearchForm extends javax.swing.JFrame {
 
+    private ArrayList<BusStop> BusStopResult;
     /**
      * Creates new form SearchForm
      */
@@ -35,12 +43,13 @@ public class SearchForm extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        TableBus = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        TableBusStop = new javax.swing.JTable();
         tBSearch = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Search");
@@ -55,7 +64,7 @@ public class SearchForm extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        TableBus.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -78,7 +87,7 @@ public class SearchForm extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(TableBus);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -88,12 +97,12 @@ public class SearchForm extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Buses", new javax.swing.ImageIcon(getClass().getResource("/ui/BusIcon16.png")), jPanel1); // NOI18N
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        TableBusStop.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -116,7 +125,7 @@ public class SearchForm extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(TableBusStop);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -126,12 +135,14 @@ public class SearchForm extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Bus Stops", new javax.swing.ImageIcon(getClass().getResource("/ui/BusStops16.png")), jPanel2, ""); // NOI18N
 
         jLabel1.setText("Search:");
+
+        jLabel2.setText("Tip: Double click for more info");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -144,7 +155,8 @@ public class SearchForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tBSearch)))
+                        .addComponent(tBSearch))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -156,32 +168,68 @@ public class SearchForm extends javax.swing.JFrame {
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedPane1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void RefreshSearchResult()
+    {
+        String SearchText = tBSearch.getText();
+        BusStopResult = BusService.get().SearchBusStop(SearchText);
+        DefaultTableModel model = (DefaultTableModel)TableBusStop.getModel();
+        model.setRowCount(0);
+        for(BusStop bs : BusStopResult){
+            model.addRow(new Object[]{ bs.GetBusStopCode(), bs.GetBusStopDesc(),bs.GetRoadDesc()});
+        }
+        
+        ArrayList<Bus> BusResult = BusService.get().SearchBus(SearchText);
+        model = (DefaultTableModel)TableBus.getModel();
+        model.setRowCount(0);
+        for(Bus b : BusResult){
+            model.addRow(new Object[]{ b.GetBusCode() });
+        }
+    }
+    
+    private void ShowBusStop(int Row)
+    {
+        BusStopInfoForm ui = new BusStopInfoForm(this,BusStopResult.get(Row));
+        ui.setVisible(true);
+    }
+    
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         // TODO add your handling code here:
         tBSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                RefreshSearchResult();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                
-                //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                RefreshSearchResult();
             }
-            // implement the methods
 
             @Override
             public void changedUpdate(DocumentEvent e) {
             }
         });
+        TableBusStop.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    JTable table =(JTable)me.getSource();
+                    Point p = me.getPoint();
+                    int row = table.rowAtPoint(p);
+                    ShowBusStop(row);
+                    //JOptionPane.showMessageDialog(null, "TEST");
+                }
+            }
+        });
+        RefreshSearchResult();
     }//GEN-LAST:event_formComponentShown
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -189,14 +237,15 @@ public class SearchForm extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable TableBus;
+    private javax.swing.JTable TableBusStop;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextField tBSearch;
     // End of variables declaration//GEN-END:variables
 }

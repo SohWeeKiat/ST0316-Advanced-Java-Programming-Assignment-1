@@ -22,6 +22,10 @@ public class SplashScreen extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
 
+    public void SetProgressBarFull()
+    {
+        jProgressBar1.setValue(100);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -41,6 +45,8 @@ public class SplashScreen extends javax.swing.JFrame {
         setLocation(new java.awt.Point(0, 0));
         setUndecorated(true);
         setResizable(false);
+
+        jProgressBar1.setForeground(new java.awt.Color(0, 255, 102));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));

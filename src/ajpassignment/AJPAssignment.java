@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package ajpassignment;
+import javax.swing.JOptionPane;
 import ui.*;
 
 /**
@@ -12,16 +13,25 @@ import ui.*;
  */
 public class AJPAssignment {
 
-    public static void LaunchSplash() throws InterruptedException{
+    public static boolean LaunchSplash() throws InterruptedException{
         SplashScreen Splash = new SplashScreen();
         Splash.setVisible(true);
-        Thread.sleep(2000);
+        if (!BusService.get().Initialize()){
+            JOptionPane.showMessageDialog(null, "Failed to initialize bus data","Error",JOptionPane.ERROR_MESSAGE);
+            Splash.dispose();
+            return false;
+        }
+        Splash.SetProgressBarFull();
+        Thread.sleep(1000);
         Splash.dispose();
+        return true;
     }
     
     public static void main(String[] args) throws InterruptedException{
         // TODO code application logic here
-        LaunchSplash();
+        if (!LaunchSplash()){
+            return;
+        }
         UIManager.GetMainUI().setVisible(true);
     }
     
