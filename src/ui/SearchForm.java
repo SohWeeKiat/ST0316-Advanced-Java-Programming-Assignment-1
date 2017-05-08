@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 public class SearchForm extends javax.swing.JFrame {
 
     private ArrayList<BusStop> BusStopResult;
+    private ArrayList<Bus> BusResult;
     /**
      * Creates new form SearchForm
      */
@@ -186,7 +187,7 @@ public class SearchForm extends javax.swing.JFrame {
             model.addRow(new Object[]{ bs.GetBusStopCode(), bs.GetBusStopDesc(),bs.GetRoadDesc()});
         }
         
-        ArrayList<Bus> BusResult = BusService.get().SearchBus(SearchText);
+        BusResult = BusService.get().SearchBus(SearchText);
         model = (DefaultTableModel)TableBus.getModel();
         model.setRowCount(0);
         for(Bus b : BusResult){
@@ -197,6 +198,12 @@ public class SearchForm extends javax.swing.JFrame {
     private void ShowBusStop(int Row)
     {
         BusStopInfoForm ui = new BusStopInfoForm(this,BusStopResult.get(Row));
+        ui.setVisible(true);
+    }
+    
+    private void ShowBus(int Row)
+    {
+        BusInfoForm ui = new BusInfoForm(this,BusResult.get(Row));
         ui.setVisible(true);
     }
     
@@ -225,7 +232,17 @@ public class SearchForm extends javax.swing.JFrame {
                     Point p = me.getPoint();
                     int row = table.rowAtPoint(p);
                     ShowBusStop(row);
-                    //JOptionPane.showMessageDialog(null, "TEST");
+                }
+            }
+        });
+        TableBus.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    JTable table =(JTable)me.getSource();
+                    Point p = me.getPoint();
+                    int row = table.rowAtPoint(p);
+                    ShowBus(row);
                 }
             }
         });

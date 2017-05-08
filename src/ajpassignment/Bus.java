@@ -12,7 +12,7 @@ import java.util.HashMap;
  *
  * @author Wee Kiat
  */
-public class Bus {
+public class Bus implements Comparable{
     
     private final String bus_code;
     private final HashMap<Integer,ArrayList<BusStop>> svc_routes;
@@ -20,13 +20,13 @@ public class Bus {
     public Bus() 
     {
         bus_code = "";
-        svc_routes = new HashMap<Integer, ArrayList<BusStop>>();
+        svc_routes = new HashMap<>();
     }
 
     public Bus(String BusCode) 
     {
         bus_code = BusCode;
-        svc_routes = new HashMap<Integer, ArrayList<BusStop>>();
+        svc_routes = new HashMap<>();
     }
     
     public String GetBusCode() 
@@ -34,12 +34,23 @@ public class Bus {
         return bus_code;
     }
     
+    public HashMap<Integer,ArrayList<BusStop>> GetRoutes()
+    {
+        return svc_routes;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return bus_code;
+    }
+
     public void AddBusStop(int Dir,BusStop bs) 
     {
         if (svc_routes.containsKey(Dir)){
             svc_routes.get(Dir).add(bs);
         }else{
-            ArrayList<BusStop> NewRoute = new ArrayList<BusStop>();
+            ArrayList<BusStop> NewRoute = new ArrayList<>();
             NewRoute.add(bs);
             svc_routes.put(Dir,NewRoute);
         }
@@ -77,5 +88,50 @@ public class Bus {
             }
         }
         return null;
+    }
+
+    public BusStop GetNextBusStop(BusStop current)
+    {
+        for(ArrayList<BusStop> route : svc_routes.values()){
+            int BsIndex = route.indexOf(current);
+            if (BsIndex >= 0 && ++BsIndex < route.size()){
+            	return route.get(BsIndex);
+            }
+        }
+        return null;
+    }
+    
+    private int GetBusCleanCode()
+    {
+        String SNumber = "";
+        for(int i = 0;i < bus_code.length();i++){
+            char c = bus_code.charAt(i);
+            if (c >= '0' && c <= '9'){
+                SNumber += c;
+            }
+        }
+        return Integer.parseInt(SNumber);
+    }
+    
+    @Override
+    public int compareTo(Object o) {
+        Bus Bus2 = (Bus)o;
+        boolean isFirstCharAlpha1 = GetBusCode().charAt(0) >= 'A';
+        boolean isFirstCharAlpha2 = Bus2.GetBusCode().charAt(0) >= 'A';
+        if (isFirstCharAlpha1 && isFirstCharAlpha2){
+            return GetBusCode().compareTo(Bus2.GetBusCode());
+        }else if (isFirstCharAlpha1 && !isFirstCharAlpha2){
+            return 1;
+        }else if (isFirstCharAlpha2 && !isFirstCharAlpha1){
+            return -1;
+        }
+        int BusNumber1 = GetBusCleanCode();
+        int BusNumber2 = Bus2.GetBusCleanCode();
+        if (BusNumber1 > BusNumber2){
+            return 1;
+        }else if (BusNumber1 == BusNumber2){
+            return 0;
+        }
+        return -1;
     }
 }

@@ -69,7 +69,9 @@ public class BusStopInfoForm extends javax.swing.JDialog {
         DefaultTableModel model = (DefaultTableModel)TableBusRoute.getModel();
         model.setRowCount(0);
         for(BusStop bs : bus_stops){
-            model.addRow(new Object[]{ i++, bs.GetBusStopCode(),bs.GetBusStopDesc(),bs.GetRoadDesc()});
+            model.addRow(new Object[]{ 
+                bs != CurrentBusStop ? i++ : ("=>" + i++), 
+                bs.GetBusStopCode(),bs.GetBusStopDesc(),bs.GetRoadDesc()});
         }
     }
     /**

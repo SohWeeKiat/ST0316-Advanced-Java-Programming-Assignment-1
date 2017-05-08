@@ -12,7 +12,7 @@ import java.util.HashMap;
  *
  * @author Wee Kiat
  */
-public class BusStop {
+public class BusStop implements Comparable{
     
     private final String bus_stop_code;
     private final String road_desc;
@@ -24,7 +24,7 @@ public class BusStop {
         bus_stop_code = "";
         road_desc = "";
         bus_stop_desc = "";
-        buses = new ArrayList<Bus>();
+        buses = new ArrayList<>();
     }
     
     public BusStop(String BusCode,String RoadDesc,String BusStopDesc)
@@ -32,7 +32,7 @@ public class BusStop {
     	bus_stop_code = BusCode;
         road_desc = RoadDesc;
         bus_stop_desc = BusStopDesc;
-        buses = new ArrayList<Bus>();
+        buses = new ArrayList<>();
     }
     
     public String GetBusStopCode()
@@ -68,5 +68,34 @@ public class BusStop {
                 buses.add(b);
             }
         }
+    }
+    
+    public ArrayList<BusStop> GetAllNextBusStops()
+    {
+    	ArrayList<BusStop> BusStops = new ArrayList<>();
+    	for(Bus b : buses){
+            BusStop bs = b.GetNextBusStop(this);
+            if (bs != null){
+                BusStops.add(bs);
+            }
+    	}
+    	return BusStops;
+    }
+
+    public ArrayList<Bus> GetNextBusStopSvcs(BusStop NextBusStop)
+    {
+        ArrayList<Bus> n_buses = new ArrayList<>();
+    	for(Bus b : buses){
+            BusStop bs = b.GetNextBusStop(this);
+            if (bs == NextBusStop){
+                n_buses.add(b);
+            }
+    	}
+    	return n_buses;
+    }
+    
+    @Override
+    public int compareTo(Object o) {
+        return GetBusStopCode().compareTo(((BusStop)o).GetBusStopCode());
     }
 }
