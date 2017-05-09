@@ -70,13 +70,13 @@ public class BusStop implements Comparable{
         }
     }
     
-    public ArrayList<BusStop> GetAllNextBusStops()
+    public ArrayList<BusStopPath> GetAllNextBusStops()
     {
-    	ArrayList<BusStop> BusStops = new ArrayList<>();
+    	ArrayList<BusStopPath> BusStops = new ArrayList<>();
     	for(Bus b : buses){
             BusStop bs = b.GetNextBusStop(this);
             if (bs != null){
-                BusStops.add(bs);
+                BusStops.add(new BusStopPath(this,bs,b));
             }
     	}
     	return BusStops;
@@ -96,6 +96,24 @@ public class BusStop implements Comparable{
     
     @Override
     public int compareTo(Object o) {
-        return GetBusStopCode().compareTo(((BusStop)o).GetBusStopCode());
+        BusStop bs2 = (BusStop)o;
+        boolean isFirstCharAlpha1 = bus_stop_code.charAt(0) >= 'A';
+        boolean isFirstCharAlpha2 = bs2.bus_stop_code.charAt(0) >= 'A';
+        if (isFirstCharAlpha1 && isFirstCharAlpha2){
+            return bus_stop_code.compareTo(bs2.bus_stop_code);
+        }else if (isFirstCharAlpha1 && !isFirstCharAlpha2){
+            return 1;
+        }else if (isFirstCharAlpha2 && !isFirstCharAlpha1){
+            return -1;
+        }
+        int BusStop1 = Integer.parseInt(bus_stop_code);
+        int BusStop2 = Integer.parseInt(bs2.bus_stop_code);
+        if (BusStop1 > BusStop2){
+            return 1;
+        }else if (BusStop1 == BusStop2){
+            return 0;
+        }
+        return -1;
+        //return GetBusStopCode().compareTo(((BusStop)o).GetBusStopCode());
     }
 }

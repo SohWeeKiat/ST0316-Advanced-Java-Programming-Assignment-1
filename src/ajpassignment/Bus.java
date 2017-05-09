@@ -116,10 +116,10 @@ public class Bus implements Comparable{
     @Override
     public int compareTo(Object o) {
         Bus Bus2 = (Bus)o;
-        boolean isFirstCharAlpha1 = GetBusCode().charAt(0) >= 'A';
-        boolean isFirstCharAlpha2 = Bus2.GetBusCode().charAt(0) >= 'A';
+        boolean isFirstCharAlpha1 = bus_code.charAt(0) >= 'A';
+        boolean isFirstCharAlpha2 = Bus2.bus_code.charAt(0) >= 'A';
         if (isFirstCharAlpha1 && isFirstCharAlpha2){
-            return GetBusCode().compareTo(Bus2.GetBusCode());
+            return bus_code.compareTo(Bus2.bus_code);
         }else if (isFirstCharAlpha1 && !isFirstCharAlpha2){
             return 1;
         }else if (isFirstCharAlpha2 && !isFirstCharAlpha1){

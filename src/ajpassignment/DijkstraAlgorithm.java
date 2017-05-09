@@ -13,9 +13,9 @@ import java.util.*;
  */
 public class DijkstraAlgorithm {
     
-    private Set<BusStop> settledNodes;
-    private Set<BusStop> unSettledNodes;
-    private Map<BusStop, BusStop> predecessors;
+    private Set<BusStopPath> settledNodes;
+    private Set<BusStopPath> unSettledNodes;
+    private Map<BusStopPath, BusStopPath> predecessors;
     private Map<BusStop, Integer> distance;
     
     public DijkstraAlgorithm()
@@ -29,22 +29,22 @@ public class DijkstraAlgorithm {
         distance = new HashMap<>();
         predecessors = new HashMap<>();
         distance.put(start, 0);
-        unSettledNodes.add(start);
+        unSettledNodes.add(new BusStopPath(null,start,null));
         while (unSettledNodes.size() > 0) {
-        	BusStop node = getMinimum(unSettledNodes);
+        	BusStopPath node = getMinimum(unSettledNodes);
         	settledNodes.add(node);
         	unSettledNodes.remove(node);
         	findMinimalDistances(node);
         }
     }
 	
-    private void findMinimalDistances(BusStop node) 
+    private void findMinimalDistances(BusStopPath node) 
     {
-        List<BusStop> adjacentNodes = getNeighbors(node);
-        for (BusStop target : adjacentNodes) {
+        List<BusStopPath> adjacentNodes = getNeighbors(node);
+        for (BusStopPath target : adjacentNodes) {
             if (getShortestDistance(target) > getShortestDistance(node)
                     + getDistance(node, target)) {
-                distance.put(target, getShortestDistance(node)
+                distance.put(target.GetDest(), getShortestDistance(node)
                     + getDistance(node, target));
                 predecessors.put(target, node);
                 unSettledNodes.add(target);
@@ -52,9 +52,9 @@ public class DijkstraAlgorithm {
         }
     }
 	
-    private int getDistance(BusStop node, BusStop target) 
+    private int getDistance(BusStopPath node, BusStopPath target) 
     {
-        List<BusStop> neighbors = node.GetAllNextBusStops();
+        List<BusStopPath> neighbors = node.GetDest().GetAllNextBusStops();
         if (neighbors.contains(target)){
         	return 1;
         }
@@ -62,54 +62,55 @@ public class DijkstraAlgorithm {
         throw new RuntimeException("Should not happen");
     }
 	
-    private List<BusStop> getNeighbors(BusStop node) 
+    private List<BusStopPath> getNeighbors(BusStopPath node) 
     {
-        List<BusStop> neighbors = node.GetAllNextBusStops();
-        List<BusStop> neighborsCopy = new ArrayList<>(neighbors);
-        for (BusStop bs : neighbors) {
-            if (isSettled(bs)) {
-                neighborsCopy.remove(bs);
+        List<BusStopPath> neighbors = node.GetDest().GetAllNextBusStops();
+        List<BusStopPath> neighborsCopy = new ArrayList<>(neighbors);
+        for (BusStopPath bsp : neighbors) {
+            if (isSettled(bsp)) {
+                neighborsCopy.remove(bsp);
             }
         }
         return neighborsCopy;
     }
 	
-    private BusStop getMinimum(Set<BusStop> bus_stops) 
+    private BusStopPath getMinimum(Set<BusStopPath> bus_stops) 
     {
-        BusStop minimum = null;
-        for (BusStop bs : bus_stops) {
+        BusStopPath minimum = null;
+        for (BusStopPath bsp : bus_stops) {
             if (minimum == null) {
-                minimum = bs;
+                minimum = bsp;
             } else {
-                if (getShortestDistance(bs) < getShortestDistance(minimum)) {
-                    minimum = bs;
+                if (getShortestDistance(bsp) < getShortestDistance(minimum)) {
+                    minimum = bsp;
                 }
             }
         }
         return minimum;
     }
 	
-    private boolean isSettled(BusStop bus_stop) {
+    private boolean isSettled(BusStopPath bus_stop) {
         return settledNodes.contains(bus_stop);
     }
 	
-    private int getShortestDistance(BusStop destination) 
+    private int getShortestDistance(BusStopPath destination) 
     {
-        Integer d = distance.get(destination);
+        Integer d = distance.get(destination.GetDest());
         if (d == null) {
             return Integer.MAX_VALUE;
         }
         return d;
     }
 	
-    private LinkedList<BusStop> getPath(BusStop target) 
+    private LinkedList<BusStopPath> getPath(BusStop target) 
     {
-        LinkedList<BusStop> path = new LinkedList<>();
-        BusStop step = target;
+        LinkedList<BusStopPath> path = new LinkedList<>();
+        BusStopPath step = new BusStopPath(null,target,null);
         // check if a path exists
         if (predecessors.get(step) == null) {
-                return null;
+            return null;
         }
+        step = predecessors.get(step);
         path.add(step);
         while (predecessors.get(step) != null) {
             step = predecessors.get(step);
@@ -120,7 +121,7 @@ public class DijkstraAlgorithm {
         return path;
     }
 	
-    public LinkedList<BusStop> getPath(BusStop Start, BusStop Dest)
+    public LinkedList<BusStopPath> getPath(BusStop Start, BusStop Dest)
     {
         SetStartBusStop(Start);
         return getPath(Dest);

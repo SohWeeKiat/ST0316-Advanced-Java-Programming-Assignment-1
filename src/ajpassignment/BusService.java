@@ -16,7 +16,7 @@ public class BusService {
     private static final BusService BS_Singleton = new BusService();
     private final HashMap<String,BusStop> bus_stops;
     private final HashMap<String,Bus> bus_svcs;
-    private DijkstraAlgorithm dijkstra;
+    private final DijkstraAlgorithm dijkstra;
     
     static public BusService get()
     {
@@ -28,6 +28,20 @@ public class BusService {
         bus_stops = new HashMap<>();
         bus_svcs = new HashMap<>();
         dijkstra = new DijkstraAlgorithm();
+    }
+    
+    public List<BusStop> GetAllBusStop()
+    {
+        List<BusStop> list = new ArrayList<BusStop>(bus_stops.values());
+        Collections.sort(list);
+        return list;
+    }
+    
+    public List<Bus> GetAllBuses()
+    {
+        List<Bus> list = new ArrayList<Bus>(bus_svcs.values());
+        Collections.sort(list);
+        return list;
     }
     
     public boolean Initialize()
@@ -47,12 +61,17 @@ public class BusService {
             bs.PopulateBuses(bus_svcs);
         }
         
-        LinkedList<BusStop> route = dijkstra.getPath(bus_stops.get("28509"), bus_stops.get("28291"));
-
-        for(int i = 0;i < route.size() - 1;i++){
+        LinkedList<BusStopPath> route = dijkstra.getPath(bus_stops.get("28509"), bus_stops.get("28291"));
+        for(int i = 0;i < route.size();i++){
             System.out.println(route.get(i));
-            System.out.println(route.get(i).
-                    GetNextBusStopSvcs(route.get(i+1)));
+            //System.out.println(route.get(i).
+                    //GetNextBusStopSvcs(route.get(i+1)));
+        }
+        route = dijkstra.getPath(bus_stops.get("28509"), bus_stops.get("44151"));
+        for(int i = 0;i < route.size();i++){
+            System.out.println(route.get(i));
+            //System.out.println(route.get(i).
+                    //GetNextBusStopSvcs(route.get(i+1)));
         }
         return true;
     }

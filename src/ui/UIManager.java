@@ -11,9 +11,9 @@ package ui;
  */
 public class UIManager {
     
-    private static final MainForm MainUI = new MainForm();
+    private static final MainForm2 MainUI = new MainForm2();
     
-    public static MainForm GetMainUI()
+    public static MainForm2 GetMainUI()
     {
         return MainUI;
     }
