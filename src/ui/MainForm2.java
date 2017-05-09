@@ -26,6 +26,8 @@ public class MainForm2 extends javax.swing.JFrame {
 
     private ArrayList<BusStop> BusStopResult;
     private ArrayList<Bus> BusResult;
+    private List<BusStop> AllBusStops;
+    private List<Bus> AllBuses;
     
     /**
      * Creates new form MainForm2
@@ -346,7 +348,7 @@ public class MainForm2 extends javax.swing.JFrame {
                     JTable table =(JTable)me.getSource();
                     Point p = me.getPoint();
                     int row = table.rowAtPoint(p);
-                    ShowBusStop(row);
+                    ShowResultBusStop(row);
                 }
             }
         });
@@ -357,24 +359,48 @@ public class MainForm2 extends javax.swing.JFrame {
                     JTable table =(JTable)me.getSource();
                     Point p = me.getPoint();
                     int row = table.rowAtPoint(p);
+                    ShowResultBus(row);
+                }
+            }
+        });
+        
+        TableBusStops.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    JTable table =(JTable)me.getSource();
+                    Point p = me.getPoint();
+                    int row = table.rowAtPoint(p);
+                    ShowBusStop(row);
+                }
+            }
+        });
+        TableBus.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    JTable table =(JTable)me.getSource();
+                    Point p = me.getPoint();
+                    int row = table.rowAtPoint(p);
                     ShowBus(row);
                 }
             }
         });
+        
         RefreshSearchResult();
         ShowAllBusAndBusStops();
     }//GEN-LAST:event_formComponentShown
 
     private void ShowAllBusAndBusStops()
     {
-        List<BusStop> bus_stops = BusService.get().GetAllBusStop();
-        List<Bus> buses = BusService.get().GetAllBuses();
+        AllBusStops = BusService.get().GetAllBusStop();
+        AllBuses = BusService.get().GetAllBuses();
         DefaultTableModel model = (DefaultTableModel)TableBus.getModel();
-        for(Bus b : buses){
+        for(Bus b : AllBuses){
             model.addRow(new Object[]{ b.GetBusCode() });
         }
         model = (DefaultTableModel)TableBusStops.getModel();
-        for(BusStop bs : bus_stops){
+        for(BusStop bs : AllBusStops){
             model.addRow(new Object[]{ bs.GetBusStopCode(),bs.GetBusStopDesc(),
             bs.GetRoadDesc()});
         }
@@ -398,15 +424,27 @@ public class MainForm2 extends javax.swing.JFrame {
         }
     }
     
-    private void ShowBusStop(int Row)
+    private void ShowResultBusStop(int Row)
     {
         BusStopInfoForm ui = new BusStopInfoForm(this,BusStopResult.get(Row));
         ui.setVisible(true);
     }
     
-    private void ShowBus(int Row)
+    private void ShowResultBus(int Row)
     {
         BusInfoForm ui = new BusInfoForm(this,BusResult.get(Row));
+        ui.setVisible(true);
+    }
+    
+    private void ShowBusStop(int Row)
+    {
+        BusStopInfoForm ui = new BusStopInfoForm(this,AllBusStops.get(Row));
+        ui.setVisible(true);
+    }
+    
+    private void ShowBus(int Row)
+    {
+        BusInfoForm ui = new BusInfoForm(this,AllBuses.get(Row));
         ui.setVisible(true);
     }
     
