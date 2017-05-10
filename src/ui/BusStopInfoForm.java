@@ -43,19 +43,11 @@ public class BusStopInfoForm extends javax.swing.JDialog {
         for(Bus b : buses){
             model.addRow(new Object[]{ b.GetBusCode() });
         }
-        
-        TableBuses.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent me) {
-                if (me.getClickCount() == 1) {
-                    JTable table =(JTable)me.getSource();
-                    Point p = me.getPoint();
-                    int row = table.rowAtPoint(p);
-                    ShowBusRoute(row);
-                }
-            }
-        });
-        
+        TableBuses.addMouseListener(new TableClickEvent(false,(Integer row) ->{
+            ShowBusRoute(row);
+            return null;
+        }));
+  
         DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
         leftRenderer.setHorizontalAlignment(JLabel.LEFT);
         TableBusRoute.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);

@@ -58,7 +58,7 @@ public class BusStop implements Comparable{
     @Override
     public String toString() 
     {
-    	return bus_stop_code + "-" + bus_stop_desc + "," + road_desc;
+    	return bus_stop_code + " - " + bus_stop_desc + " , " + road_desc;
     }
     
     public void PopulateBuses(HashMap<String,Bus> bus_svcs)

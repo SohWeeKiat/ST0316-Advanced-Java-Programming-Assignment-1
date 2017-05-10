@@ -49,9 +49,9 @@ public class BusService {
         try{
             if (!InitializeBusStops()){
                 return false;
-            }else if (!InitializeBusSvcs("lta-sbst_route.csv")){
+            }else if (!InitializeBusSvcs("lta-sbst_route.csv",true)){
                 return false;
-            }else if (!InitializeBusSvcs("lta-smrt_route.csv")){
+            }else if (!InitializeBusSvcs("lta-smrt_route.csv",false)){
                 return false;
             }
         }catch(IOException e){
@@ -102,7 +102,7 @@ public class BusService {
         return true;
     }
     
-    private boolean InitializeBusSvcs(String FileName) throws IOException
+    private boolean InitializeBusSvcs(String FileName,boolean SBS_Bus) throws IOException
     {
         FileReader BusSvcFile;
         try{
@@ -126,7 +126,7 @@ public class BusService {
                 BusStop bs = bus_stops.get(BusStopCode);
                 b.AddBusStop(Dir,bs);
             }else{
-                b = new Bus(BusCode);
+                b = new Bus(BusCode,SBS_Bus);
                 bus_svcs.put(BusCode,b);
                 b.AddBusStop(Dir,bus_stops.get(BusStopCode));
             }

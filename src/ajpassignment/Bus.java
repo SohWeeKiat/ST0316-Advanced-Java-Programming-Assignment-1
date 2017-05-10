@@ -16,17 +16,20 @@ public class Bus implements Comparable{
     
     private final String bus_code;
     private final HashMap<Integer,ArrayList<BusStop>> svc_routes;
+    private final boolean is_sbs_bus;
     
     public Bus() 
     {
         bus_code = "";
         svc_routes = new HashMap<>();
+        is_sbs_bus = true;
     }
 
-    public Bus(String BusCode) 
+    public Bus(String BusCode,boolean IsSBS) 
     {
         bus_code = BusCode;
         svc_routes = new HashMap<>();
+        is_sbs_bus = IsSBS;
     }
     
     public String GetBusCode() 
@@ -37,6 +40,11 @@ public class Bus implements Comparable{
     public HashMap<Integer,ArrayList<BusStop>> GetRoutes()
     {
         return svc_routes;
+    }
+    
+    public boolean IsSBSBus()
+    {
+        return is_sbs_bus;
     }
     
     @Override
