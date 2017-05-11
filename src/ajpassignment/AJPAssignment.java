@@ -32,7 +32,7 @@ public class AJPAssignment {
         if (!LaunchSplash()){
             return;
         }
-        UIManager.GetMainUI().setVisible(true);
+        new MainForm().setVisible(true);
     }
     
 }
