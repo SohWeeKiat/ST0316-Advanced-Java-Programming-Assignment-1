@@ -6,6 +6,7 @@
 package ajpassignment;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  *
@@ -17,9 +18,16 @@ public class DijkstraAlgorithm {
     private Set<BusStopPath> unSettledNodes;
     private Map<BusStopPath, BusStopPath> predecessors;
     private Map<BusStop, Integer> distance;
+    private ArrayList<BusStop> busStopNotToCheck;
     
     public DijkstraAlgorithm()
     {
+        busStopNotToCheck = null;
+    }
+    
+    public void SetBusStopNotToCheck(ArrayList<BusStop> BusStops)
+    {
+        busStopNotToCheck = BusStops;
     }
     
     private void SetStartBusStop(BusStop start)
@@ -58,7 +66,6 @@ public class DijkstraAlgorithm {
         if (neighbors.contains(target)){
         	return 1;
         }
-        System.out.println("Failed to get distance");
         throw new RuntimeException("Should not happen");
     }
 	
@@ -67,7 +74,9 @@ public class DijkstraAlgorithm {
         List<BusStopPath> neighbors = node.GetDest().GetAllNextBusStops();
         List<BusStopPath> neighborsCopy = new ArrayList<>(neighbors);
         for (BusStopPath bsp : neighbors) {
-            if (isSettled(bsp)) {
+            if (busStopNotToCheck != null && busStopNotToCheck.contains(bsp.GetDest())){
+                neighborsCopy.remove(bsp);
+            }else if (isSettled(bsp)) {
                 neighborsCopy.remove(bsp);
             }
         }
@@ -111,13 +120,19 @@ public class DijkstraAlgorithm {
             return null;
         }
         step = predecessors.get(step);
+        for (Entry<BusStopPath, BusStopPath> entry : predecessors.entrySet()) {
+            if (entry.getValue()== step) {
+                path.add(entry.getKey());
+                break;
+            }
+        }
         path.add(step);
         while (predecessors.get(step) != null) {
             step = predecessors.get(step);
             path.add(step);
         }
-        // Put it into the correct order
         Collections.reverse(path);
+        path.remove(0);
         return path;
     }
 	

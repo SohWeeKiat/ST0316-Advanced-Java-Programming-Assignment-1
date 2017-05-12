@@ -60,19 +60,17 @@ public class BusService {
         for(BusStop bs : bus_stops.values()){
             bs.PopulateBuses(bus_svcs);
         }
+        ArrayList<BusStopPathCollection> paths = GeneratePath(bus_stops.get("28509"), bus_stops.get("44151"));
+        for(BusStopPathCollection c : paths){
+            for(int i = 0;i < c.GetPath().size();i++){
+                System.out.println(c.GetPath().get(i));
+            //System.out.println(route.get(i).
+                    //GetNextBusStopSvcs(route.get(i+1)));
+            }
+            System.out.println("---------------------------------------------------------");
+        }
         
-        LinkedList<BusStopPath> route = dijkstra.getPath(bus_stops.get("28509"), bus_stops.get("28291"));
-        for(int i = 0;i < route.size();i++){
-            System.out.println(route.get(i));
-            //System.out.println(route.get(i).
-                    //GetNextBusStopSvcs(route.get(i+1)));
-        }
-        route = dijkstra.getPath(bus_stops.get("28509"), bus_stops.get("44151"));
-        for(int i = 0;i < route.size();i++){
-            System.out.println(route.get(i));
-            //System.out.println(route.get(i).
-                    //GetNextBusStopSvcs(route.get(i+1)));
-        }
+        
         return true;
     }
     
@@ -160,5 +158,32 @@ public class BusService {
         }
         Collections.sort(B_List);
         return B_List;
+    }
+    
+    public ArrayList<BusStopPathCollection> GeneratePath(BusStop Start, BusStop Dest)
+    {
+        ArrayList<BusStopPathCollection> collection = new ArrayList<>();
+        
+        LinkedList<BusStopPath> route = dijkstra.getPath(Start, Dest);
+        if (route != null){
+            BusStopPathCollection c = new BusStopPathCollection(route);
+            collection.add(c);
+            ArrayList<BusStop> ignore_list = new ArrayList<>();
+            LinkedList<BusStopPath> reverse_path = new LinkedList<>(route);
+            Collections.reverse(reverse_path);
+            int MaxBusStop = route.size();
+            for(BusStopPath p : reverse_path){
+                ignore_list.clear();
+                ignore_list.add(p.GetDest());
+                dijkstra.SetBusStopNotToCheck(ignore_list);
+                LinkedList<BusStopPath> route2 = dijkstra.getPath(Start, Dest);
+                if(route2 != null && route2.size() > MaxBusStop){
+                    MaxBusStop = route2.size();
+                    collection.add(new BusStopPathCollection(route2));
+                }
+            }
+        }
+        Collections.sort(collection);
+        return collection;
     }
 }

@@ -48,7 +48,8 @@ public class BusStopPath {
     @Override
     public boolean equals(Object o)
     {
-        return Destination == ((BusStopPath)o).Destination;
+        BusStopPath p = (BusStopPath)o;
+        return Destination == p.Destination;
     }
 
     @Override
