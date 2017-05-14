@@ -28,6 +28,8 @@ public class MainForm extends javax.swing.JFrame {
     
     private BusStop StartLocation;
     private BusStop EndLocation;
+    private ArrayList<BusStopPathCollection> Routes;
+    
     /**
      * Creates new form MainForm2
      */
@@ -114,6 +116,41 @@ public class MainForm extends javax.swing.JFrame {
         ui.setVisible(true);
     }
     
+    private void ShowRoute(int Row)
+    {
+        BusStopPathCollection path = Routes.get(Row);
+        DefaultTableModel model = (DefaultTableModel)TableRouteInfo.getModel();
+        model.setRowCount(0);
+        int Index = 1;
+        for(BusStopPath p : path.GetPath()){
+            BusStop src = p.GetSrc();
+            model.addRow(new Object[]{
+                Index++,
+                src.GetBusStopCode(),
+                src.GetBusStopDesc(),
+                src.GetRoadDesc(),
+                p.GetBus().GetBusCode()});
+        }
+    }
+    
+    private void SearchRoute()
+    {
+        if (StartLocation == null || EndLocation == null)
+            return;
+        Routes = BusService.get().GeneratePath(StartLocation, EndLocation);
+        DefaultTableModel model = (DefaultTableModel)TableRouteResult.getModel();
+        model.setRowCount(0);
+        int Count = 1;
+        for(BusStopPathCollection c : Routes){
+            model.addRow(new Object[]{ Count++ + " - " + c.toString() });
+        }
+        if (Routes.size() > 0){
+            TableRouteResult.setRowSelectionInterval(0, 0);
+            ShowRoute(0);
+        }
+            
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -152,9 +189,9 @@ public class MainForm extends javax.swing.JFrame {
         tBEndLoc = new javax.swing.JTextField();
         bEndLocBrowse = new javax.swing.JButton();
         jScrollPane5 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        TableRouteResult = new javax.swing.JTable();
         jScrollPane6 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        TableRouteInfo = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Bus Service Browser");
@@ -201,7 +238,7 @@ public class MainForm extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 825, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -239,7 +276,7 @@ public class MainForm extends javax.swing.JFrame {
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 825, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -256,7 +293,7 @@ public class MainForm extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane2)
+            .addComponent(jTabbedPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
@@ -319,8 +356,8 @@ public class MainForm extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
+            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -365,8 +402,8 @@ public class MainForm extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
-            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
+            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -403,7 +440,7 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        TableRouteResult.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -426,9 +463,9 @@ public class MainForm extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane5.setViewportView(jTable1);
+        jScrollPane5.setViewportView(TableRouteResult);
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        TableRouteInfo.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -451,7 +488,7 @@ public class MainForm extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane6.setViewportView(jTable2);
+        jScrollPane6.setViewportView(TableRouteInfo);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -465,7 +502,7 @@ public class MainForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(tBStartLoc)
+                        .addComponent(tBStartLoc, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(bStartLocBrowse))
                     .addGroup(jPanel6Layout.createSequentialGroup()
@@ -474,9 +511,9 @@ public class MainForm extends javax.swing.JFrame {
                         .addComponent(bEndLocBrowse)))
                 .addContainerGap())
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE))
+                .addComponent(jScrollPane6))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -503,7 +540,7 @@ public class MainForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 971, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -549,7 +586,10 @@ public class MainForm extends javax.swing.JFrame {
             ShowBus(row);
             return null;
         }));
-        
+        TableRouteResult.addMouseListener(new TableClickEvent(false,(Integer row) ->{
+            ShowRoute(row);
+            return null;
+        }));
         RefreshSearchResult();
         ShowAllBusAndBusStops();
     }//GEN-LAST:event_formComponentShown
@@ -567,6 +607,7 @@ public class MainForm extends javax.swing.JFrame {
                 }else{
                      tBStartLoc.setText(StartLocation.toString());
                      Success = true;
+                     SearchRoute();
                 }
             }else{
                 Success = true;
@@ -587,6 +628,7 @@ public class MainForm extends javax.swing.JFrame {
                 }else{
                     tBEndLoc.setText(EndLocation.toString());
                     Success = true;
+                    SearchRoute();
                 }
             }else{
                 Success = true;
@@ -636,6 +678,8 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JTable TableBusResult;
     private javax.swing.JTable TableBusStopResult;
     private javax.swing.JTable TableBusStops;
+    private javax.swing.JTable TableRouteInfo;
+    private javax.swing.JTable TableRouteResult;
     private javax.swing.JButton bEndLocBrowse;
     private javax.swing.JButton bStartLocBrowse;
     private javax.swing.JLabel jLabel1;
@@ -659,8 +703,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextField tBEndLoc;
     private javax.swing.JTextField tBSearch;
     private javax.swing.JTextField tBStartLoc;

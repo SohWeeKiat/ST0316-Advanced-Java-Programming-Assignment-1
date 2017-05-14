@@ -7,7 +7,7 @@ package ajpassignment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.LinkedList;
 
 /**
  *
@@ -89,11 +89,38 @@ public class Bus implements Comparable{
         return false;
     }
     
+    public BusStopPathCollection GenerateBusStopPath(BusStop Start,BusStop Dest)
+    {
+        ArrayList<BusStop> route = GetRoute(Start,Dest);
+        System.out.println(route);
+        int StartIndex = route.indexOf(Start);
+        int EndIndex = route.indexOf(Dest);
+        LinkedList<BusStopPath> path = new LinkedList<>();
+        for(int i = StartIndex;i < EndIndex;i++){
+            path.add(new BusStopPath(route.get(i),route.get(i + 1),this));
+        }
+        return new BusStopPathCollection(path);
+    }
+    
     public ArrayList<BusStop> GetRoute(BusStop Current)
     {
         for(ArrayList<BusStop> route : svc_routes.values()){
             if (route.indexOf(Current) >= 0){
                 return route;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<BusStop> GetRoute(BusStop Start,BusStop Dest)
+    {
+        for(ArrayList<BusStop> route : svc_routes.values()){
+            int StartBsIndex = route.indexOf(Start);
+            int EndBsIndex = route.indexOf(Dest);
+            if (StartBsIndex >= 0 && EndBsIndex >= 0){
+                if (StartBsIndex < EndBsIndex){
+                    return route;
+                }
             }
         }
         return null;

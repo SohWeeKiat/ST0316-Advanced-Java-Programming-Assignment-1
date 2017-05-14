@@ -17,7 +17,7 @@ public class DijkstraAlgorithm {
     private Set<BusStopPath> settledNodes;
     private Set<BusStopPath> unSettledNodes;
     private Map<BusStopPath, BusStopPath> predecessors;
-    private Map<BusStop, Integer> distance;
+    private Map<BusStop, Double> distance;
     private ArrayList<BusStop> busStopNotToCheck;
     
     public DijkstraAlgorithm()
@@ -36,7 +36,7 @@ public class DijkstraAlgorithm {
         unSettledNodes = new HashSet<>();
         distance = new HashMap<>();
         predecessors = new HashMap<>();
-        distance.put(start, 0);
+        distance.put(start, 0.0);
         unSettledNodes.add(new BusStopPath(null,start,null));
         while (unSettledNodes.size() > 0) {
         	BusStopPath node = getMinimum(unSettledNodes);
@@ -60,11 +60,11 @@ public class DijkstraAlgorithm {
         }
     }
 	
-    private int getDistance(BusStopPath node, BusStopPath target) 
+    private double getDistance(BusStopPath node, BusStopPath target) 
     {
         List<BusStopPath> neighbors = node.GetDest().GetAllNextBusStops();
         if (neighbors.contains(target)){
-        	return 1;
+            return 1;
         }
         throw new RuntimeException("Should not happen");
     }
@@ -102,11 +102,11 @@ public class DijkstraAlgorithm {
         return settledNodes.contains(bus_stop);
     }
 	
-    private int getShortestDistance(BusStopPath destination) 
+    private double getShortestDistance(BusStopPath destination) 
     {
-        Integer d = distance.get(destination.GetDest());
+        Double d = distance.get(destination.GetDest());
         if (d == null) {
-            return Integer.MAX_VALUE;
+            return Double.MAX_VALUE;
         }
         return d;
     }
