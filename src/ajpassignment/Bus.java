@@ -7,6 +7,7 @@ package ajpassignment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 /**
@@ -83,23 +84,27 @@ public class Bus implements Comparable{
             if (StartBsIndex >= 0 && EndBsIndex >= 0){
                 if (StartBsIndex < EndBsIndex){
                     return true;
+                }else if (EndBsIndex == 0 && route.get(route.size() - 1) == Dest){
+                	return true;
                 }
             }
         }
         return false;
     }
     
-    public BusStopPathCollection GenerateBusStopPath(BusStop Start,BusStop Dest)
+    public LinkedList<BusStopPath> GenerateBusStopPath(BusStop Start,BusStop Dest)
     {
         ArrayList<BusStop> route = GetRoute(Start,Dest);
-        System.out.println(route);
         int StartIndex = route.indexOf(Start);
         int EndIndex = route.indexOf(Dest);
+        if (EndIndex == 0 && route.get(0) == route.get(route.size() - 1)){
+            EndIndex = route.size() - 1;
+        }
         LinkedList<BusStopPath> path = new LinkedList<>();
         for(int i = StartIndex;i < EndIndex;i++){
             path.add(new BusStopPath(route.get(i),route.get(i + 1),this));
         }
-        return new BusStopPathCollection(path);
+        return path;
     }
     
     public ArrayList<BusStop> GetRoute(BusStop Current)
@@ -117,6 +122,9 @@ public class Bus implements Comparable{
         for(ArrayList<BusStop> route : svc_routes.values()){
             int StartBsIndex = route.indexOf(Start);
             int EndBsIndex = route.indexOf(Dest);
+            if (EndBsIndex == 0 && route.get(0) == route.get(route.size() - 1)){
+                EndBsIndex = route.size() - 1;
+            }
             if (StartBsIndex >= 0 && EndBsIndex >= 0){
                 if (StartBsIndex < EndBsIndex){
                     return route;
@@ -125,16 +133,38 @@ public class Bus implements Comparable{
         }
         return null;
     }
-
-    public BusStop GetNextBusStop(BusStop current)
+    
+    private ArrayList<BusStop> TryGetRoute(BusStop Start,BusStop Dest)
     {
         for(ArrayList<BusStop> route : svc_routes.values()){
-            int BsIndex = route.indexOf(current);
-            if (BsIndex >= 0 && ++BsIndex < route.size()){
-            	return route.get(BsIndex);
+            int StartBsIndex = route.indexOf(Start);
+            int EndBsIndex = route.indexOf(Dest);
+            if (EndBsIndex == 0 && route.get(0) == route.get(route.size() - 1)){
+                EndBsIndex = route.size() - 1;
+            }
+            if (StartBsIndex >= 0 && EndBsIndex >= 0){
+                if (StartBsIndex < EndBsIndex){
+                    return route;
+                }else if (Start == Dest){
+                    return route;
+                }
+            }else if (EndBsIndex >= 0){
+                return route;
             }
         }
         return null;
+    }
+
+    public LinkedHashSet<BusStop> GetReachableBusStops(BusStop prev,BusStop current)
+    {
+    	ArrayList<BusStop> route = TryGetRoute(prev,current);
+    	return new LinkedHashSet<>(route.subList(route.indexOf(current) + 1,route.size()));
+    }
+    
+    public LinkedHashSet<BusStop> GetPreviousBusStops(BusStop current)
+    {
+    	ArrayList<BusStop> route = GetRoute(current);
+    	return new LinkedHashSet<>(route.subList(0,route.indexOf(current)));
     }
     
     private int GetBusCleanCode()

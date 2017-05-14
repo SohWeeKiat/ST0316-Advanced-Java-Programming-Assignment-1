@@ -16,8 +16,7 @@ public class BusService {
     private static final BusService BS_Singleton = new BusService();
     private final HashMap<String,BusStop> bus_stops;
     private final HashMap<String,Bus> bus_svcs;
-    private final DijkstraAlgorithm dijkstra;
-    
+
     static public BusService get()
     {
         return BS_Singleton;
@@ -27,19 +26,18 @@ public class BusService {
     {
         bus_stops = new HashMap<>();
         bus_svcs = new HashMap<>();
-        dijkstra = new DijkstraAlgorithm();
     }
     
     public ArrayList<BusStop> GetAllBusStop()
     {
-        ArrayList<BusStop> list = new ArrayList<BusStop>(bus_stops.values());
+        ArrayList<BusStop> list = new ArrayList<>(bus_stops.values());
         Collections.sort(list);
         return list;
     }
     
     public List<Bus> GetAllBuses()
     {
-        List<Bus> list = new ArrayList<Bus>(bus_svcs.values());
+        List<Bus> list = new ArrayList<>(bus_svcs.values());
         Collections.sort(list);
         return list;
     }
@@ -148,55 +146,10 @@ public class BusService {
         Collections.sort(B_List);
         return B_List;
     }
-    
-    private ArrayList<BusStopPathCollection> TryGetDirectPath(BusStop Start,BusStop Dest)
-    {
-        ArrayList<BusStopPathCollection> collection = new ArrayList<>();
-        ArrayList<Bus> buses = Start.GetBuses();
-        for(Bus b : buses){
-            if (b.CanReachDestination(Start, Dest)){
-                BusStopPathCollection c = b.GenerateBusStopPath(Start, Dest);
-                if (c.GetPath().size() > 0){
-                    collection.add(c);
-                }
-            }
-        }
-        return collection;
-    }
-    
+
     public ArrayList<BusStopPathCollection> GeneratePath(BusStop Start, BusStop Dest)
     {
-        ArrayList<BusStopPathCollection> paths = TryGetDirectPath(Start,Dest);
-        dijkstra.SetBusStopNotToCheck(null);
-        LinkedList<BusStopPath> route = dijkstra.getPath(Start, Dest);
-        if (route != null){
-            BusStopPathCollection c = new BusStopPathCollection(route);
-            boolean SameRoute = false;
-            for(BusStopPathCollection o : paths){
-                if (o.equals(c)){
-                    SameRoute = true;
-                }
-            }
-            if (SameRoute){
-                 Collections.sort(paths);
-                return paths;
-            }
-            paths.add(c);
-            ArrayList<BusStop> ignore_list = new ArrayList<>();
-            LinkedList<BusStopPath> reverse_path = new LinkedList<>(route);
-            Collections.reverse(reverse_path);
-            int MaxBusStop = route.size();
-            for(BusStopPath p : reverse_path){
-                ignore_list.clear();
-                ignore_list.add(p.GetDest());
-                dijkstra.SetBusStopNotToCheck(ignore_list);
-                LinkedList<BusStopPath> route2 = dijkstra.getPath(Start, Dest);
-                if(route2 != null && route2.size() > MaxBusStop){
-                    MaxBusStop = route2.size();
-                    paths.add(new BusStopPathCollection(route2));
-                }
-            }
-        }
+        ArrayList<BusStopPathCollection> paths = CommonBusStopSearch.GeneratePath(Start, Dest);
         Collections.sort(paths);
         return paths;
     }

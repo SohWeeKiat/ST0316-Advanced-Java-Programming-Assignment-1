@@ -13,6 +13,8 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -130,6 +132,16 @@ public class MainForm extends javax.swing.JFrame {
                 src.GetBusStopDesc(),
                 src.GetRoadDesc(),
                 p.GetBus().GetBusCode()});
+            
+            if (path.GetPath().get(path.GetPath().size() - 1) == p){
+                src = p.GetDest();
+                model.addRow(new Object[]{
+                    Index++,
+                    src.GetBusStopCode(),
+                    src.GetBusStopDesc(),
+                    src.GetRoadDesc(),
+                    p.GetBus().GetBusCode()});
+            }
         }
     }
     
@@ -147,8 +159,11 @@ public class MainForm extends javax.swing.JFrame {
         if (Routes.size() > 0){
             TableRouteResult.setRowSelectionInterval(0, 0);
             ShowRoute(0);
+        }else{
+            model = (DefaultTableModel)TableRouteInfo.getModel();
+            model.setRowCount(0);
+            JOptionPane.showMessageDialog(null, "Fail to find possible routes","Error",JOptionPane.ERROR_MESSAGE);
         }
-            
     }
     
     /**
@@ -586,10 +601,15 @@ public class MainForm extends javax.swing.JFrame {
             ShowBus(row);
             return null;
         }));
-        TableRouteResult.addMouseListener(new TableClickEvent(false,(Integer row) ->{
-            ShowRoute(row);
-            return null;
-        }));
+        TableRouteResult.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent lse) {
+                if (!lse.getValueIsAdjusting()) {
+                    ShowRoute(TableRouteResult.getSelectedRow());
+                }
+            }
+        });
         RefreshSearchResult();
         ShowAllBusAndBusStops();
     }//GEN-LAST:event_formComponentShown

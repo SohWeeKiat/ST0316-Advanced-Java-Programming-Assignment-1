@@ -7,6 +7,8 @@ package ajpassignment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 /**
  *
@@ -70,28 +72,25 @@ public class BusStop implements Comparable{
         }
     }
     
-    public ArrayList<BusStopPath> GetAllNextBusStops()
+    public LinkedHashSet<BusStop> GetAllReachableBusStop(BusStop prev,HashSet<Bus> ignore_buses)
     {
-    	ArrayList<BusStopPath> BusStops = new ArrayList<>();
+    	LinkedHashSet<BusStop> list = new LinkedHashSet<>();
     	for(Bus b : buses){
-            BusStop bs = b.GetNextBusStop(this);
-            if (bs != null){
-                BusStops.add(new BusStopPath(this,bs,b));
-            }
+            if (!ignore_buses.contains(b))
+                list.addAll(b.GetReachableBusStops(prev,this));
     	}
-    	return BusStops;
+    	return list;
     }
-
-    public ArrayList<Bus> GetNextBusStopSvcs(BusStop NextBusStop)
+    
+    public LinkedHashSet<BusStop> GetPreviousBusStop(HashSet<Bus> ignore_buses)
     {
-        ArrayList<Bus> n_buses = new ArrayList<>();
+    	LinkedHashSet<BusStop> list = new LinkedHashSet<>();
     	for(Bus b : buses){
-            BusStop bs = b.GetNextBusStop(this);
-            if (bs == NextBusStop){
-                n_buses.add(b);
-            }
+            if (ignore_buses.contains(b))
+                continue;
+            list.addAll(b.GetPreviousBusStops(this));
     	}
-    	return n_buses;
+    	return list;
     }
     
     @Override
@@ -114,6 +113,5 @@ public class BusStop implements Comparable{
             return 0;
         }
         return -1;
-        //return GetBusStopCode().compareTo(((BusStop)o).GetBusStopCode());
     }
 }

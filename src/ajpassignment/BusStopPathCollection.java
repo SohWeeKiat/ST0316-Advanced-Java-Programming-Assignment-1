@@ -6,6 +6,7 @@
 package ajpassignment;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -16,10 +17,18 @@ import java.util.Objects;
 public class BusStopPathCollection implements Comparable{
     
     private final LinkedList<BusStopPath> path;
+    private final ArrayList<BusStop> transfers;
     
     public BusStopPathCollection(LinkedList<BusStopPath> p)
     {
         path = p;
+        transfers = null;
+    }
+    
+    public BusStopPathCollection(LinkedList<BusStopPath> p,ArrayList<BusStop> t)
+    {
+        path = p;
+        transfers = t;
     }
     
     public LinkedList<BusStopPath> GetPath()
@@ -36,15 +45,7 @@ public class BusStopPathCollection implements Comparable{
     {
         return path.get(path.size() - 1).GetDest();
     }
-    
-    public boolean IsDirectPathRoute()
-    {
-        BusStop Start = GetStartLocation();
-        BusStop Dest = GetDestination();
-        return path.get(0).GetBus().CanReachDestination(Start, Dest)
-                && GetBusesTaken().size() == 1;
-    }
-    
+
     public ArrayList<Bus> GetBusesTaken()
     {
         ArrayList<Bus> buses = new ArrayList<>();
@@ -55,6 +56,30 @@ public class BusStopPathCollection implements Comparable{
         return buses;
     }
     
+    private HashSet<Bus> GetBusesAvilToTake()
+    {
+        BusStop StartLoc = GetStartLocation();
+        ArrayList<Bus> buses = StartLoc.GetBuses();
+        HashSet<Bus> avail_buses = new HashSet<>();
+        for(int i = 0;i < transfers.size();i++){
+            for(Bus b : buses){
+                if (b.CanReachDestination(i == 0 ? StartLoc : transfers.get(i - 1), 
+                        transfers.get(i))){
+                    avail_buses.add(b);
+                }
+            }
+            buses = transfers.get(i).GetBuses();
+        }
+        BusStop LastStop = transfers.get(transfers.size() - 1);
+        BusStop Dest = GetDestination();
+    	for(Bus b : buses){
+            if (b.CanReachDestination(LastStop, Dest)){
+                avail_buses.add(b);
+            }
+        }
+        return avail_buses;
+    }
+    
     @Override
     public int compareTo(Object o) {
         BusStopPathCollection c = (BusStopPathCollection)o;
@@ -63,9 +88,17 @@ public class BusStopPathCollection implements Comparable{
         else if (path.size() == c.path.size()){
             ArrayList<Bus> BusListA = GetBusesTaken();
             ArrayList<Bus> BusListB = c.GetBusesTaken();
-            if (BusListA.equals(BusListB))
+            if (BusListA.equals(BusListB)){
+                HashSet<Bus> BusAvailA = GetBusesAvilToTake();
+                HashSet<Bus> BusAvailB = c.GetBusesAvilToTake();
+                if (BusAvailA.equals(BusAvailB))
+                    return 0;
+                else if (BusAvailA.size() > BusAvailB.size())
+                    return 1;
+                else if (BusAvailA.size() < BusAvailA.size())
+                    return -1;
                 return 0;
-            else if (BusListA.size() > BusListB.size())
+            }else if (BusListA.size() > BusListB.size())
                 return 1;
             else if (BusListA.size() < BusListB.size())
                 return -1;
