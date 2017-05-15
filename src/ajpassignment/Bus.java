@@ -85,7 +85,7 @@ public class Bus implements Comparable{
                 if (StartBsIndex < EndBsIndex){
                     return true;
                 }else if (EndBsIndex == 0 && route.get(route.size() - 1) == Dest){
-                	return true;
+                    return true;
                 }
             }
         }

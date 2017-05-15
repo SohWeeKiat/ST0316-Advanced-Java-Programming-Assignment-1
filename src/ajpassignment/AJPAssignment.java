@@ -27,12 +27,12 @@ public class AJPAssignment {
         return true;
     }
     
-    public static void main(String[] args) throws InterruptedException{
+    public static void main(String[] args) throws InterruptedException, Exception{
         // TODO code application logic here
         if (!LaunchSplash()){
             return;
         }
+        
         new MainForm().setVisible(true);
     }
-    
 }

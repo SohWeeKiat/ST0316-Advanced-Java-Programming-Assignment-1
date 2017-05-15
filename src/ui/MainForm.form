@@ -429,8 +429,11 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel6">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Desination :"/>
+                <Property name="text" type="java.lang.String" value="End Location :"/>
               </Properties>
+              <AccessibilityProperties>
+                <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="End Location :"/>
+              </AccessibilityProperties>
             </Component>
             <Component class="javax.swing.JTextField" name="tBStartLoc">
               <Properties>

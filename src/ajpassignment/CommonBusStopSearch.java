@@ -81,7 +81,7 @@ public class CommonBusStopSearch {
     	bus_stop_list.removeAll(bus_stops_checked);
     	buses_checked.addAll(Current.GetBuses());
     	if (ContainsDestination(bus_stop_list,end_bus_stop_list,transfer_stops)){
-    		return true;
+            return true;
     	}
     	for(BusStop b : bus_stop_list){
             if (!bus_stops_checked.contains(b)){

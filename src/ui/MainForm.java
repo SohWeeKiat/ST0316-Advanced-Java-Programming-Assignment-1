@@ -120,6 +120,9 @@ public class MainForm extends javax.swing.JFrame {
     
     private void ShowRoute(int Row)
     {
+        if (Row < 0 || Row >= Routes.size()){
+            return;
+        }
         BusStopPathCollection path = Routes.get(Row);
         DefaultTableModel model = (DefaultTableModel)TableRouteInfo.getModel();
         model.setRowCount(0);
@@ -308,7 +311,7 @@ public class MainForm extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
+            .addComponent(jTabbedPane2)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
@@ -434,7 +437,7 @@ public class MainForm extends javax.swing.JFrame {
 
         jLabel5.setText("Start Location :");
 
-        jLabel6.setText("Desination :");
+        jLabel6.setText("End Location :");
 
         tBStartLoc.setEditable(false);
 
@@ -549,13 +552,15 @@ public class MainForm extends javax.swing.JFrame {
                     .addComponent(jScrollPane6)))
         );
 
+        jLabel6.getAccessibleContext().setAccessibleName("End Location :");
+
         jTabbedPane1.addTab("Find Route", new javax.swing.ImageIcon(getClass().getResource("/ui/images/Compass.png")), jPanel6); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 971, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
