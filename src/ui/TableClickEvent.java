@@ -32,6 +32,8 @@ public class TableClickEvent extends MouseAdapter{
             JTable table =(JTable)me.getSource();
             Point p = me.getPoint();
             int row = table.rowAtPoint(p);
+            if (row < 0)
+                return;
             eventproc.apply(row);
         }
     }

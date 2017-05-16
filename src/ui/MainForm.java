@@ -120,7 +120,7 @@ public class MainForm extends javax.swing.JFrame {
     
     private void ShowRoute(int Row)
     {
-        if (Row < 0 || Row >= Routes.size()){
+        if (Row >= Routes.size()){
             return;
         }
         BusStopPathCollection path = Routes.get(Row);
